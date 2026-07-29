@@ -1,29 +1,16 @@
 import { popupHTML } from "./popup.js";
 
-//Bounding box in latitude and longitude for the regions being searche
+
 // const url =
 //     "https://api.water.noaa.gov/nwps/v1/gauges" +
-//     "?bbox.xmin=-82" +
-//     "&bbox.ymin=39" +
-//     "&bbox.xmax=-67" +
-//     "&bbox.ymax=48" +
+//     "?bbox.xmin=-79.9" +
+//     "&bbox.ymin=40.4" +
+//     "&bbox.xmax=-71.8" +
+//     "&bbox.ymax=42.9" +
 //     "&srid=EPSG_4326";
-
 const url =
-    "https://api.water.noaa.gov/nwps/v1/gauges" +
-    "?bbox.xmin=-79.9" +
-    "&bbox.ymin=40.4" +
-    "&bbox.xmax=-71.8" +
-    "&bbox.ymax=45.2" +
-    "&srid=EPSG_4326";
-
-// const url =
-//     "https://api.water.noaa.gov/nwps/v1/gauges" +
-//     "?bbox.xmin=-80.52" +
-//     "&bbox.ymin=39.72" +
-//     "&bbox.xmax=-74.68" +
-//     "&bbox.ymax=42.26" +
-//     "&srid=EPSG_4326";
+    // "http://oscclev.github.io/WeatherTrackerBackend/";
+    "https://floodwatch-api.onrender.com/gauges";
 
 
 //MAYBE GET RID OF?
@@ -108,14 +95,15 @@ export async function loadRiverGauges(map) {
                 flowUnit:
                     gauge.status.observed.secondaryUnit,
 
+                //Not every guage has a flood category, so this makes it more readable for the popup
                 currentCategory:
-                    gauge.status.observed.floodCategory,
-
+                    gauge.status?.observed?.floodCategory ?? "normal",
+                //Same change here
                 forecastCategory:
-                    gauge.status.forecast.floodCategory,
-
+                    gauge.status?.forecast?.floodCategory ?? "not available",
+                //Same change here
                 updated:
-                    gauge.status.observed.validTime,
+                    gauge.status?.observed?.validTime ?? null,
 
                 color: getColor(
                     gauge.status.observed.floodCategory
