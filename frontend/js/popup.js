@@ -5,9 +5,9 @@ function readableCategory(category){
 
         case "missing":
             return {
-                text:"NO DATA AVAILABLE",
+                text:"Data Unavailable",
                 description:
-                "This river gauge is currently unavailable.",
+                "This gauge is not currently reporting observations.",
                 class:"missing"
             };
 
@@ -96,6 +96,75 @@ export function popupHTML(props){
 
         : "Not available";
 
+    const rows = [];
+
+
+    // Only show state if it exists
+    if (props.state) {
+
+        rows.push(`
+            <tr>
+                <td><b>Location</b></td>
+                <td>${props.state}</td>
+            </tr>
+        `);
+
+    }
+
+
+    // Only show stage if available
+    if (current !== "Not available") {
+
+        rows.push(`
+            <tr>
+                <td><b>Current Level</b></td>
+                <td>${current}</td>
+            </tr>
+        `);
+
+    }
+
+
+    // Only show flow if available
+    if (flow !== "Not available") {
+
+        rows.push(`
+            <tr>
+                <td><b>River Flow</b></td>
+                <td>${flow}</td>
+            </tr>
+        `);
+
+    }
+
+
+    // Only show forecast if it's meaningful
+    if (
+        props.forecastCategory &&
+        (props.forecastCategory !== "Forecast Unavailable" && props.forecastCategory !== "Forecast Currently Unavailable")
+    ) {
+
+        rows.push(`
+            <tr>
+                <td><b>Forecast</b></td>
+                <td>${props.forecastCategory}</td>
+            </tr>
+        `);
+
+    }
+
+
+    // Only show update time if available
+    if (updated !== "Not available") {
+
+        rows.push(`
+            <tr>
+                <td><b>Last Updated</b></td>
+                <td>${updated}</td>
+            </tr>
+        `);
+
+    }
 
 
 return `
@@ -122,42 +191,7 @@ ${status.description}
 
 <table>
 
-
-<tr>
-<td><b>River</b></td>
-<td>${props.river ?? "Unknown"}</td>
-</tr>
-
-
-<tr>
-<td><b>Location</b></td>
-<td>${props.state ?? ""}</td>
-</tr>
-
-
-<tr>
-<td><b>Current Level</b></td>
-<td>${current}</td>
-</tr>
-
-
-<tr>
-<td><b>River Flow</b></td>
-<td>${flow}</td>
-</tr>
-
-
-<tr>
-<td><b>Forecast</b></td>
-<td>${props.forecastCategory ?? "Not available"}</td>
-</tr>
-
-
-<tr>
-<td><b>Last Updated</b></td>
-<td>${updated}</td>
-</tr>
-
+${rows.join("")}
 
 </table>
 

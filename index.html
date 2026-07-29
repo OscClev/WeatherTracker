@@ -34,16 +34,61 @@ Search
 
 
 
-<div id="legend">
+<div id="filters">
 
-<h3>Flood Levels</h3>
+<h3>Filter Gauges</h3>
 
-<div><span class="green"></span>No Flood</div>
-<!-- <div><span class="blue"></span>No Data</div> -->
-<div><span class="yellow"></span>Action</div>
-<div><span class="orange"></span>Minor</div>
-<div><span class="red"></span>Moderate</div>
-<div><span class="purple"></span>Major</div>
+<div class="filter-buttons">
+
+<button id="selectAll">
+Select All
+</button>
+
+<button id="clearAll">
+Clear All
+</button>
+
+</div>
+
+<div id="filters">
+
+<label>
+<input type="checkbox" value="no_flooding" checked>
+<span class="green filter-dot"></span>
+Normal
+</label>
+
+<label>
+<input type="checkbox" value="action" checked>
+<span class="yellow filter-dot"></span>
+Action
+</label>
+
+<label>
+<input type="checkbox" value="minor" checked>
+<span class="orange filter-dot"></span>
+Minor
+</label>
+
+<label>
+<input type="checkbox" value="moderate" checked>
+<span class="red filter-dot"></span>
+Moderate
+</label>
+
+<label>
+<input type="checkbox" value="major" checked>
+<span class="purple filter-dot"></span>
+Major
+</label>
+
+<label>
+<input type="checkbox" value="missing" checked>
+<span class="gray filter-dot"></span>
+No Data
+</label>
+
+</div>
 
 </div>
 
@@ -57,3 +102,13 @@ Search
 
 </body>
 </html>
+
+<!-- 
+This could go on the popup info if wanted
+<tr>
+<td><b>River</b></td>
+<td>${props.river ?? "Unknown"}</td>
+</tr> 
+
+
+-->

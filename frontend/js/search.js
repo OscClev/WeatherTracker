@@ -1,3 +1,6 @@
+let searchMarker = null;
+
+
 export function setupSearch(map) {
 
     const box =
@@ -57,7 +60,13 @@ export function setupSearch(map) {
 
 
 
-        new maplibregl.Marker()
+        if(searchMarker){
+
+            searchMarker.remove();
+
+        }
+
+        searchMarker = new maplibregl.Marker()
 
         .setLngLat([
             Number(place.lon),

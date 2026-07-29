@@ -16,6 +16,9 @@ const url =
 function getColor(category) {
     switch ((category || "").toLowerCase()) {
 
+        case "missing":
+            return "#8e8e8eff";
+
         case "major":
             return "#7b1fa2";
 
@@ -33,13 +36,72 @@ function getColor(category) {
     }
 }
 
+function getCategory(gauge) {
+
+    const observed = gauge.status?.observed;
+
+    // If there is no observation, this gauge is missing.
+    if (
+        !observed ||
+        observed.primary == null ||
+        observed.primary == -999
+    ) {
+        return "missing";
+    }
+
+    // If NOAA reports no flood category,
+    // treat it as normal conditions.
+    return observed.floodCategory || "normal";
+}
+
+function getForecastText(category) {
+
+    switch ((category || "").toLowerCase()) {
+
+        case "major":
+            return "Major Flooding Expected";
+
+        case "moderate":
+            return "Moderate Flooding Expected";
+
+        case "minor":
+            return "Minor Flooding Expected";
+
+        case "action":
+            return "Near Flood Stage";
+
+        case "normal":
+        case "no_flooding":
+            return "No Flooding Expected";
+
+        case "fcst_not_current":
+            return "Forecast Currently Unavailable";
+
+        default:
+            return "Forecast Unavailable";
+    }
+
+}
+
 export async function loadRiverGauges(map) {
 
     console.log("Downloading gauges...");
 
+    let data;
+
+    try {
+
     const response = await fetch(url);
 
-    const data = await response.json();
+    data = await response.json();
+
+    } catch (error) {
+
+    console.error("Unable to load river gauges:", error);
+
+    return;
+
+    }   
 
     console.log(data);
 
@@ -59,7 +121,7 @@ export async function loadRiverGauges(map) {
             gauge.latitude == null ||
             gauge.longitude == null
         ) continue;
-
+        const category = getCategory(gauge);
         geojson.features.push({
 
             type: "Feature",
@@ -77,8 +139,8 @@ export async function loadRiverGauges(map) {
                 lid: gauge.lid,
 
                 name: gauge.name,
-
-                river: gauge.river ?? "Unknown",
+                //This lets us hide the row later instead of displaying "Unknown."
+                river: gauge.river || "Unknown",
 
                 state: gauge.state?.abbreviation ?? "",
 
@@ -94,19 +156,16 @@ export async function loadRiverGauges(map) {
                 flowUnit:
                     gauge.status.observed.secondaryUnit,
 
-                //Not every guage has a flood category, so this makes it more readable for the popup
-                currentCategory:
-                    gauge.status?.observed?.floodCategory ?? "normal",
-                //Same change here
-                forecastCategory:
-                    gauge.status?.forecast?.floodCategory ?? "not available",
-                //Same change here
+                currentCategory: category,
+            
+                forecastCategory: getForecastText(
+                    gauge.status?.forecast?.floodCategory
+                ),
+
                 updated:
                     gauge.status?.observed?.validTime ?? null,
 
-                color: getColor(
-                    gauge.status.observed.floodCategory
-                )
+                color: getColor(category)
 
             }
 

@@ -117,31 +117,62 @@ background:#9c27b0;
 
 }
 
-/* Added Earlier */
-/* .maplibregl-popup-content{
-    border-radius:12px;
-    padding:15px;
-} */
-
+/* Popup CSS */
 .maplibregl-popup-content {
 
-    width: 350px;
-    padding: 15px;
+    width:350px;
+    max-width:350px;
+
+    padding:15px;
+
+    box-sizing:border-box;
+
+    overflow-wrap:break-word;
+
 }
 
-.popup h2{
-    margin:0;
-    font-size:20px;
-}
+.popup {
 
-.popup table{
     width:100%;
-    margin-top:10px;
-    border-collapse:collapse;
+
+    min-width:260px;
+
+    overflow-wrap:break-word;
+
 }
 
-.popup td{
-    padding:6px 0;
+.popup h2 {
+
+    margin:0;
+
+    font-size:20px;
+
+}
+
+.popup table {
+
+    width:100%;
+
+    margin-top:12px;
+
+    border-collapse:collapse;
+
+    table-layout:fixed;
+
+}
+
+.popup td {
+
+    padding:4px;
+
+    overflow-wrap:break-word;
+
+}
+
+.popup td:first-child {
+
+    width:35%;
+
 }
 
 .popup-status{
@@ -164,27 +195,8 @@ background:#9c27b0;
 
 }
 
-.popup{
 
-    min-width:260px;
-
-}
-
-.popup table{
-
-    width:100%;
-
-    margin-top:12px;
-
-}
-
-.popup td{
-
-    padding:4px;
-
-}
-
-.badge{
+.badge {
 
     display:inline-block;
 
@@ -226,12 +238,99 @@ background:#9c27b0;
 
 }
 
-.badge.not_defined{
+/* .badge.not_defined{
 
     background:#2e7d32;
 
-}
+} */
 
 .badge.missing {
     background: #1976d2;
+}
+
+.badge.normal {
+    background:#2e7d32;
+}
+
+/* The Filter CSS */
+
+
+#filters{
+
+    margin-top:15px;
+
+}
+
+#filters label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-bottom:10px;
+
+    cursor:pointer;
+
+    user-select:none;
+
+}
+
+.filter-dot{
+
+    width:14px;
+
+    height:14px;
+
+    border-radius:50%;
+
+    display:inline-block;
+
+    border:1px solid #555;
+
+}
+
+.gray{
+
+    background:#8e8e8e;
+
+}
+
+/* Buttons */
+
+.filter-buttons{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-bottom:15px;
+
+}
+
+.filter-buttons button{
+
+    flex:1;
+
+    padding:8px;
+
+    border:none;
+
+    border-radius:6px;
+
+    background:#1976d2;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+}
+
+.filter-buttons button:hover{
+
+    background:#1565c0;
+
 }
