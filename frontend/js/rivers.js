@@ -1,19 +1,18 @@
 import { popupHTML } from "./popup.js";
 
 
-// const url =
-//     "https://api.water.noaa.gov/nwps/v1/gauges" +
-//     "?bbox.xmin=-79.9" +
-//     "&bbox.ymin=40.4" +
-//     "&bbox.xmax=-71.8" +
-//     "&bbox.ymax=42.9" +
-//     "&srid=EPSG_4326";
 const url =
-    // "http://oscclev.github.io/WeatherTrackerBackend/";
-    "https://floodwatch-api.onrender.com/gauges";
+    "https://weathertrackerbackend.onrender.com/gauges" +
+    "?bbox.xmin=-79.9" +
+    "&bbox.ymin=40.4" +
+    "&bbox.xmax=-71.8" +
+    "&bbox.ymax=42.9" +
+    "&srid=EPSG_4326";
+// const url =
+//     // "http://oscclev.github.io/WeatherTrackerBackend/";
+//     "https://floodwatch-api.onrender.com/gauges";
 
 
-//MAYBE GET RID OF?
 function getColor(category) {
     switch ((category || "").toLowerCase()) {
 
