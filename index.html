@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
 
 <title>FloodWatch NY</title>
 
@@ -25,72 +22,72 @@ href="style.css">
 
 <div id="sidebar">
 
-<!-- <h1>FloodWatch NY</h1> -->
+    <input
+        id="searchBox"
+        placeholder="Search a town, city, or river...">
 
-<input id="searchBox" placeholder="Search location">
-<!-- <button id="searchButton">
-Search
-</button> -->
+    <!-- Live search results appear here -->
+    <div id="searchResults"></div>
 
 
+    <div id="filterPanel">
 
-<div id="filters">
+        <h3>Filter Gauges</h3>
 
-<h3>Filter Gauges</h3>
+        <div class="filter-buttons">
 
-<div class="filter-buttons">
+            <button id="selectAll">
+                Select All
+            </button>
 
-<button id="selectAll">
-Select All
-</button>
+            <button id="clearAll">
+                Clear All
+            </button>
 
-<button id="clearAll">
-Clear All
-</button>
+        </div>
 
-</div>
 
-<div id="filters">
+        <div id="filters">
 
-<label>
-<input type="checkbox" value="no_flooding" checked>
-<span class="green filter-dot"></span>
-Normal
-</label>
+            <label>
+                <input type="checkbox" value="no_flooding" checked>
+                <span class="green filter-dot"></span>
+                Normal
+            </label>
 
-<label>
-<input type="checkbox" value="action" checked>
-<span class="yellow filter-dot"></span>
-Action
-</label>
+            <label>
+                <input type="checkbox" value="action" checked>
+                <span class="yellow filter-dot"></span>
+                Action
+            </label>
 
-<label>
-<input type="checkbox" value="minor" checked>
-<span class="orange filter-dot"></span>
-Minor
-</label>
+            <label>
+                <input type="checkbox" value="minor" checked>
+                <span class="orange filter-dot"></span>
+                Minor
+            </label>
 
-<label>
-<input type="checkbox" value="moderate" checked>
-<span class="red filter-dot"></span>
-Moderate
-</label>
+            <label>
+                <input type="checkbox" value="moderate" checked>
+                <span class="red filter-dot"></span>
+                Moderate
+            </label>
 
-<label>
-<input type="checkbox" value="major" checked>
-<span class="purple filter-dot"></span>
-Major
-</label>
+            <label>
+                <input type="checkbox" value="major" checked>
+                <span class="purple filter-dot"></span>
+                Major
+            </label>
 
-<label>
-<input type="checkbox" value="missing" checked>
-<span class="gray filter-dot"></span>
-No Data
-</label>
+            <label>
+                <input type="checkbox" value="missing" checked>
+                <span class="gray filter-dot"></span>
+                Not Reporting
+            </label>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
 </div>
 
@@ -101,14 +98,5 @@ No Data
 <script type="module" src="frontend/js/app.js"></script>
 
 </body>
+
 </html>
-
-<!-- 
-This could go on the popup info if wanted
-<tr>
-<td><b>River</b></td>
-<td>${props.river ?? "Unknown"}</td>
-</tr> 
-
-
--->

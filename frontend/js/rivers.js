@@ -1,6 +1,8 @@
 import { popupHTML } from "./popup.js";
 
 
+export let riverFeatures = [];
+
 const url =
     "https://weathertrackerbackend.onrender.com/gauges" +
     "?bbox.xmin=-79.9" +
@@ -172,6 +174,8 @@ export async function loadRiverGauges(map) {
         });
 
     }
+
+    riverFeatures = geojson.features;
 
     console.log("GeoJSON Features:", geojson.features.length);
 
