@@ -1,80 +1,32 @@
 let searchMarker = null;
+let searchTimeout = null;
 
 import { riverFeatures } from "./rivers.js";
 import { popupHTML } from "./popup.js";
 
 
-function distance(lat1, lon1, lat2, lon2) {
-
-    const R = 6371; // kilometers
-
-    const dLat =
-        (lat2 - lat1) * Math.PI / 180;
-
-    const dLon =
-        (lon2 - lon1) * Math.PI / 180;
-
-
-    const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(lat1 * Math.PI / 180) *
-        Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) ** 2;
-
-
-    return R * 2 *
-        Math.atan2(
-            Math.sqrt(a),
-            Math.sqrt(1 - a)
-        );
-
-}
-
-
-
 export function setupSearch(map) {
-
 
     const box =
         document.getElementById("searchBox");
 
+    const results =
+        document.getElementById("searchResults");
 
-    box.addEventListener("keypress", async (event) => {
+
+    box.addEventListener("input", () => {
 
 
-        if(event.key !== "Enter")
-            return;
+        clearTimeout(searchTimeout);
 
 
         const query =
             box.value.trim();
 
 
-        if(!query)
-            return;
+        if(query.length < 3){
 
-
-
-        // Search for location
-
-        const url =
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
-
-
-
-        const response =
-            await fetch(url);
-
-
-
-        const data =
-            await response.json();
-
-
-
-        if(data.length === 0){
-
-            alert("Location not found");
+            results.innerHTML = "";
 
             return;
 
@@ -82,220 +34,201 @@ export function setupSearch(map) {
 
 
 
-        const place =
-            data[0];
+        searchTimeout = setTimeout(async()=>{
 
 
+            results.innerHTML = "";
 
-        const lat =
-            Number(place.lat);
 
+            const lower =
+                query.toLowerCase();
 
-        const lon =
-            Number(place.lon);
 
 
+            // Search river gauges first
 
-        // Move map
+            const gaugeMatches =
+                riverFeatures
 
-        map.flyTo({
+                .filter(feature=>{
 
-            center:[
-                lon,
-                lat
-            ],
+                    const props =
+                        feature.properties;
 
-            zoom:10
 
-        });
+                    return (
 
+                        props.name
+                        ?.toLowerCase()
+                        .includes(lower)
 
+                        ||
 
-        // Remove old search marker
+                        props.river
+                        ?.toLowerCase()
+                        .includes(lower)
 
-        if(searchMarker){
+                    );
 
-            searchMarker.remove();
+                })
 
-        }
+                .slice(0,5);
 
 
 
-        // Add new search marker
+            gaugeMatches.forEach(feature=>{
 
-        searchMarker =
-            new maplibregl.Marker()
 
-            .setLngLat([
-                lon,
-                lat
-            ])
+                createResult(
 
-            .addTo(map);
+                    `${feature.properties.name}
+                     <br>
+                     🌊 ${feature.properties.river}`,
 
+                    ()=>{
 
 
+                        const coords =
+                            feature.geometry.coordinates;
 
 
-        // Find nearest gauges
+                        map.flyTo({
 
-        const nearby =
-            riverFeatures
+                            center:coords,
 
-            .map(feature => {
+                            zoom:11
 
+                        });
 
-                const coords =
-                    feature.geometry.coordinates;
 
 
-                return {
+                        new maplibregl.Popup()
 
-                    feature,
+                        .setLngLat(coords)
 
-                    distance:
-                    distance(
+                        .setHTML(
+                            popupHTML(
+                                feature.properties
+                            )
+                        )
 
-                        lat,
-                        lon,
+                        .addTo(map);
 
-                        coords[1],
-                        coords[0]
 
-                    )
+                    }
 
-                };
-
-
-            })
-
-
-            .sort((a,b)=>{
-
-                return a.distance - b.distance;
-
-            })
-
-
-            .slice(0,5);
-
-
-
-
-
-        // Display nearby gauges
-
-        const container =
-            document.getElementById(
-                "searchResults"
-            );
-
-
-        if(!container)
-            return;
-
-
-
-        container.innerHTML = "";
-
-
-
-        if(nearby.length === 0){
-
-            container.innerHTML =
-            "No nearby gauges found.";
-
-            return;
-
-        }
-
-
-
-        nearby.forEach(gauge => {
-
-
-            const props =
-                gauge.feature.properties;
-
-
-
-            const div =
-                document.createElement("div");
-
-
-
-            div.className =
-                "nearbyGauge";
-
-
-
-            div.innerHTML = `
-
-                <strong>
-                    ${props.name}
-                </strong>
-
-                <br>
-
-                ${props.river}
-
-                <br>
-
-                ${gauge.distance.toFixed(1)}
-                km away
-
-                <br>
-
-                Status:
-                
-                ${props.currentCategory}
-
-            `;
-
-
-
-            div.addEventListener("click",()=>{
-
-
-                const coords =
-                    gauge.feature.geometry.coordinates;
-
-
-
-                map.flyTo({
-
-                    center:coords,
-
-                    zoom:11
-
-                });
-
-
-
-                new maplibregl.Popup()
-
-                    .setLngLat(coords)
-
-                    .setHTML(
-                        popupHTML(props)
-                    )
-
-                    .addTo(map);
+                );
 
 
             });
 
 
 
-            container.appendChild(div);
+            // If no gauges match, search locations
+
+            if(gaugeMatches.length === 0){
+
+
+                const url =
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&viewbox=-79.9,42.9,-71.8,40.4&bounded=1`;
+
+
+                const response =
+                    await fetch(url);
+
+
+                const places =
+                    await response.json();
 
 
 
-        });
+                places.slice(0,5)
+                .forEach(place=>{
 
+
+                    createResult(
+
+                        `📍 ${place.display_name}`,
+
+                        ()=>{
+
+
+                            const coords=[
+
+                                Number(place.lon),
+
+                                Number(place.lat)
+
+                            ];
+
+
+
+                            map.flyTo({
+
+                                center:coords,
+
+                                zoom:10
+
+                            });
+
+
+
+                            if(searchMarker){
+
+                                searchMarker.remove();
+
+                            }
+
+
+
+                            searchMarker =
+                            new maplibregl.Marker()
+
+                            .setLngLat(coords)
+
+                            .addTo(map);
+
+
+                        }
+
+                    );
+
+
+                });
+
+            }
+
+
+        },300);
 
 
     });
 
+
+
+    function createResult(text, callback){
+
+
+        const div =
+            document.createElement("div");
+
+
+        div.className =
+            "searchResult";
+
+
+        div.innerHTML =
+            text;
+
+
+        div.addEventListener(
+            "click",
+            callback
+        );
+
+
+        results.appendChild(div);
+
+    }
 
 }
